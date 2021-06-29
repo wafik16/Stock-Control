@@ -1,0 +1,148 @@
+﻿@model LLLVM
+
+@{
+    ViewData["Title"] = "Activity";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <a asp-action="ProductActivities" class="hidden-print">Back</a>
+</div>
+<a href="javascript:window.print()" class="hidden-print">Click to Print This Page</a>
+
+<h2>@ViewBag.ProductName</h2>
+
+@if (Model.orderedItems.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Invoice Number
+                </th>
+                <th>
+                    Quantity Out
+                </th>
+
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (OrderedItem item in Model.orderedItems)
+            {
+                <tr>
+                    <td>
+                        @item.Order.OrderDate
+                    </td>
+                    <td>
+                        @item.Order.InvoiceNumber
+                    </td>
+                    <td>
+                        @item.Quantity
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>Total Weight : @ViewBag.TotalKg</td>
+
+
+        </tr>
+    </table>
+}
+else
+{
+    <h4>No records found</h4>
+}
+<h3>New Stock Received</h3>
+
+@if (Model.NewStockLists.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Invoice Number
+                </th>
+                <th>
+                    Quantity
+                </th>
+
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (NewStockLists item in Model.NewStockLists)
+            {
+                <tr>
+                    <td>
+                        @item.NewOrderDate
+                    </td>
+                    <td>
+                        @item.InvoiceNumber
+                    </td>
+                    <td>
+                        @item.Quantity
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+}
+else
+{
+    <h4>No records found</h4>
+}
+
+<h3>Other Debits/Credit</h3>
+
+@if (Model.OtherDebits.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Date
+                </th>
+                <th>
+                    mode of Debit
+                </th>
+                <th>
+                    Quantity
+                </th>
+
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (OtherDebit item in Model.OtherDebits)
+            {
+                <tr>
+                    <td>
+                        @item.DebitDate
+                    </td>
+                    <td>
+                        @item.debitMode.ModeOfDebit
+                    </td>
+                    <td>
+                        @item.Quantity
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+}
+else
+{
+    <h4>No records found</h4>
+}
+

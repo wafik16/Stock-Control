@@ -1,0 +1,37 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+@{
+    ViewData["Title"] = "Wellcome";
+    Layout = "_Layout2";
+}
+
+
+
+<div class="grid-container">
+    <div><a asp-controller="Customers" asp-action="Index"><input type="button" class="btn btn-primary" style="font-size:30px" value="CUSTOMER" /></a></div>
+    @{
+        if ((await AuthorizationService.AuthorizeAsync(User, Model, "writepolicy")).Succeeded)
+        {
+            <div><a asp-controller="Orders" asp-action="Create"><input type="button" class="btn btn-primary" style="font-size:30px" value="SELL" /></a></div>
+        }
+    }
+
+    <div><a asp-controller="Orders" asp-action="Index"><input type="button" class="btn btn-primary" style="font-size:30px" value="SALES REPORT" /></a></div>
+    <div><a asp-controller="NewStockLists" asp-action="ListStock"><input type="button" class="btn btn-primary" style="font-size:30px" value="NEW STOCK" /></a></div>
+    <div><a asp-controller="Orders" asp-action="OtherDebitList"><input type="button" class="btn btn-primary" style="font-size:30px" value="OTHER CREDIT/DEBIT" /></a></div>
+    <div><a asp-controller="NewStockLists" asp-action="Stock"><input type="button" class="btn btn-primary" style="font-size:30px" value="STOCK BALANCE" /></a></div>
+    @{
+        if (User.IsInRole("Manager"))
+        {
+            <div><a asp-controller="Identity" asp-action="Account/Register"><input type="button" class="btn btn-primary" value="NEW USER" style="font-size:30px" /></a></div>
+            <div><a asp-controller="Role" asp-action="Index"><input type="button" class="btn btn-primary" value="ROLES" style="font-size:30px" /></a></div>
+        }
+    }
+
+
+
+    <div><a asp-controller="Products" asp-action="ProductActivities"><input type="button" class="btn btn-primary" value="PRODUCT ACTIVITY" style="font-size:30px" /></a></div>
+    <div><a asp-controller="NewStockLists" asp-action="StockTake"><input type="button" class="btn btn-primary" style="font-size:30px" value="STOCK SHEET" /></a></div>
+
+</div>

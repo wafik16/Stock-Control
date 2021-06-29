@@ -1,0 +1,135 @@
+﻿@model IEnumerable<StockMVC.ViewModel.DetailsViewModel>
+
+@{
+    ViewData["Title"] = "Invoice";
+    Layout = "~/Views/Shared/_Invoice.cshtml";
+}
+
+<script src="assets/js/jquery-1.9.1.js"></script>
+<script src="assets/js/printThis.js"></script>
+<script src="~/jquery-3.5.1.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+<script type="text/javascript">
+
+    function PrintOnlyTable() {
+        var HTML = $("html");
+        var cln = document.documentElement.innerHTML;
+        HTML.html($("table"));
+        window.print();
+        document.documentElement.innerHTML = cln;
+        return false;
+    }
+
+
+
+</script>
+
+
+<div style="max-width: 350px">
+
+    <h2 style="text-align:center">INVOICE</h2>
+
+    <div class="container" style="border: 1px solid black;width: auto;">
+        <div class="row">
+            
+            <div class="">
+                <p>Customer Name:</p>
+                <p>Order Date: @ViewBag.OrderDate</p>
+                <p>Invoice Number: @ViewBag.InvoiceNumber</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="border: 1px solid black;width:auto">
+        <table class="table" style="margin-top: 5px; width: 40px;">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ProductName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Price)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Quantity)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Total)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Price)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Quantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Total)
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div style="border: 1px solid black; width:auto">
+        <table class="table" style="margin-top: 5px;  width: 40px;">
+            <thead>
+                <tr>
+                    <th>
+                        VAT
+                    </th>
+                    <th>
+                        DELIVERY FEE
+                    </th>
+                    <th>
+                        DISCOUNT
+                    </th>
+                    <th>
+                        TOTAL AMOUNT
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td>
+                        @ViewBag.TotalVat
+                    </td>
+                    <td>
+                        @ViewBag.DeliveryFee
+                    </td>
+                    <td>
+                        @ViewBag.Discount
+                    </td>
+                    <td>
+                        @ViewBag.TotalAmount
+                    </td>
+
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <a href="javascript:window.print()" class="hidden-print">Click to Print This Page</a>
+    <p class="hidden-print">
+        <a asp-action="index">Back To List</a>
+    </p>
+
+    <p class="centered">
+        Thanks for your purchase!
+        <br>Le boucherie
+    </p>
+
+</div>

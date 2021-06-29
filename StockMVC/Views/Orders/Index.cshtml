@@ -1,0 +1,120 @@
+﻿@model PaginatedList<StockMVC.Models.Order>
+
+
+@{
+    ViewData["Title"] = "Sales Record";
+    Layout = "~/Views/Shared/_Invoice.cshtml";
+}
+
+<h2>Sales Record</h2>
+
+<p>
+    <a asp-action="Create" class="hidden-print">Create New Order</a>
+</p>
+
+<form asp-action="Index" method="get" class="hidden-print">
+    <div class="form-actions no-color">
+        <p>
+            Find by Payment Mode: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" required />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<form asp-action="List" method="get" class="hidden-print">
+    <div class="form-actions no-color">
+        <p>
+            Reports by Specified Dates: <input type="date" name="fromDate" value="@ViewData["fromDate"]" required />
+            <input type="date" name="toDate" value="@ViewData["toDate"]" required />
+            <input type="submit" value="Search" class="btn btn-default" />
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Invoice Number
+            </th>
+            <th>
+                Order Date
+            </th>
+            <th>
+                Discount
+            </th>
+            <th>
+                Delivery Fee
+            </th>
+            <th>
+                Mode of Payment
+            </th>
+            <th>
+                Total Witout VAT
+            </th>
+            <th>
+                Total VAT
+            </th>
+            <th>
+                Total Amount
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InvoiceNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Discount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DeliveryFee)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PaymentMode.ModeOfPayment)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalWithoutVat)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalVat)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalAmount)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.OrderId">Invoice</a> |
+                    <a asp-action="Delete" asp-route-id="@item.OrderId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>

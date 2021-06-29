@@ -1,0 +1,39 @@
+﻿@model StockMVC.ViewModel.ActivityVM
+
+@{
+    ViewData["Title"] = "Product Activities";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Product Activities</h2>
+
+<div class="row">
+    <div class="col-md-4">
+
+        <form asp-action="LLL" asp-controller="products" method="get">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ProductName" class="control-label"></label>
+                <select asp-for="ProductName" class="form-control" asp-items="ViewBag.ProductName"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="fromDate" class="control-label"></label>
+                <input asp-for="fromDate" class="form-control" />
+                <span asp-validation-for="fromDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="toDate" class="control-label"></label>
+                <input asp-for="toDate" class="form-control" />
+                <span asp-validation-for="toDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Search" class="btn btn-default" />
+            </div>
+
+        </form>
+
+
+    </div>
+</div>

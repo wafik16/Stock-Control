@@ -1,0 +1,36 @@
+﻿@model IEnumerable<StockMVC.ViewModel.ReportModel>
+
+@{
+    ViewData["Title"] = "Report";
+    Layout = "~/Views/Shared/_Invoice.cshtml";
+}
+
+
+
+<p>
+    <a asp-action="Index">Back To List</a>
+</p>
+<p>
+    Sales report from @ViewBag.fromDate to @ViewBag.toDate
+</p>
+
+
+@foreach (var item in Model)
+{
+    <h4>@item.OrderDate</h4>
+    <h4>@item.TotalAmount</h4>
+    <h4>@item.InvoiceNumber</h4>
+    @foreach (var tan in Model)
+    {
+        <tr>
+            <td>
+                @tan.ProductName
+            </td>
+            <td>
+                @tan.Price
+            </td>
+        </tr>
+    }
+
+}
+
