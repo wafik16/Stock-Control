@@ -60,6 +60,8 @@ namespace StockMVC
                     builder => builder.RequireRole("Manager"));
                 options.AddPolicy("editpolicy",
                     builder => builder.RequireRole("Account"));
+                options.AddPolicy("adminpolicy",
+                    builder => builder.RequireUserName("wafik16@yahoo.co.uk"));
             });
 
         }

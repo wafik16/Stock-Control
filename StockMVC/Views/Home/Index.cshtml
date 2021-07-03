@@ -9,29 +9,29 @@
 
 
 <div class="grid-container">
-    <div><a asp-controller="Customers" asp-action="Index"><input type="button" class="btn btn-primary" style="font-size:30px" value="CUSTOMER" /></a></div>
+    <div class="home-button"><a asp-controller="Customers" asp-action="Index"><input type="button" class="btn btn-primary" value="CUSTOMER" /></a></div>
     @{
         if ((await AuthorizationService.AuthorizeAsync(User, Model, "writepolicy")).Succeeded)
         {
-            <div><a asp-controller="Orders" asp-action="Create"><input type="button" class="btn btn-primary" style="font-size:30px" value="SELL" /></a></div>
+            <div class="home-button"><a asp-controller="Orders" asp-action="Create"><input type="button" class="btn btn-primary" value="SELL" /></a></div>
         }
     }
 
-    <div><a asp-controller="Orders" asp-action="Index"><input type="button" class="btn btn-primary" style="font-size:30px" value="SALES REPORT" /></a></div>
-    <div><a asp-controller="NewStockLists" asp-action="ListStock"><input type="button" class="btn btn-primary" style="font-size:30px" value="NEW STOCK" /></a></div>
-    <div><a asp-controller="Orders" asp-action="OtherDebitList"><input type="button" class="btn btn-primary" style="font-size:30px" value="OTHER CREDIT/DEBIT" /></a></div>
-    <div><a asp-controller="NewStockLists" asp-action="Stock"><input type="button" class="btn btn-primary" style="font-size:30px" value="STOCK BALANCE" /></a></div>
+    <div class="home-button"><a asp-controller="Orders" asp-action="Index"><input type="button" class="btn btn-primary" value="SALES REPORT" /></a></div>
+    <div class="home-button"><a asp-controller="NewStockLists" asp-action="ListStock"><input type="button" class="btn btn-primary" value="NEW STOCK" /></a></div>
+    <div class="home-button"><a asp-controller="Orders" asp-action="OtherDebitList"><input type="button" class="btn btn-primary" value="OTHER CREDIT/DEBIT" /></a></div>
+    <div class="home-button"><a asp-controller="NewStockLists" asp-action="Stock"><input type="button" class="btn btn-primary" value="STOCK BALANCE" /></a></div>
     @{
-        if (User.IsInRole("Manager"))
+        if (User.Identity.Name =="wafik16@yahoo.co.uk")
         {
-            <div><a asp-controller="Identity" asp-action="Account/Register"><input type="button" class="btn btn-primary" value="NEW USER" style="font-size:30px" /></a></div>
-            <div><a asp-controller="Role" asp-action="Index"><input type="button" class="btn btn-primary" value="ROLES" style="font-size:30px" /></a></div>
+            <div class="home-button"><a asp-controller="Identity" asp-action="Account/Register"><input type="button" class="btn btn-primary" value="NEW USER" /></a></div>
+            <div class="home-button"><a asp-controller="Role" asp-action="Index"><input type="button" class="btn btn-primary" value="ROLES" /></a></div>
         }
     }
 
 
 
-    <div><a asp-controller="Products" asp-action="ProductActivities"><input type="button" class="btn btn-primary" value="PRODUCT ACTIVITY" style="font-size:30px" /></a></div>
-    <div><a asp-controller="NewStockLists" asp-action="StockTake"><input type="button" class="btn btn-primary" style="font-size:30px" value="STOCK SHEET" /></a></div>
+    <div class="home-button"><a asp-controller="Products" asp-action="ProductActivities"><input type="button" class="btn btn-primary" value="PRODUCT ACTIVITY" /></a></div>
+    <div class="home-button"><a asp-controller="NewStockLists" asp-action="StockTake"><input type="button" class="btn btn-primary" value="STOCK SHEET" /></a></div>
 
 </div>

@@ -67,7 +67,14 @@ namespace StockMVC.Controllers
         public IActionResult Create()
         {
             ViewData["ProductName"] = new SelectList(_context.Products.OrderBy(m => m.ProductName), "ProductId", "ProductName");
-            ViewBag.LastInvoiceNumber = _context.NewStockLists.OrderByDescending(t => t.Id).Select(u => u.Id).First();
+            if(_context.NewStockLists.OrderByDescending(t => t.Id).Select(u => u.Id).FirstOrDefault() == null)
+            {
+                ViewBag.LastInvoiceNumber = 0;
+            } else
+            {
+                ViewBag.LastInvoiceNumber = _context.NewStockLists.OrderByDescending(t => t.Id).Select(u => u.Id).FirstOrDefault();
+            }
+            
 
             return View();
         }

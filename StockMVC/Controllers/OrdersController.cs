@@ -219,7 +219,14 @@ namespace StockMVC.Controllers
             ViewData["Price"] = new SelectList(_context.Products, "ProductId", "Price");
             ViewData["PaymentMode"] = new SelectList(_context.paymentModes, "PaymentModeId", "ModeOfPayment");
             ViewBag.UserId = User.Identity.Name;
-            ViewBag.LastInvoiceNumber = _context.orders.OrderByDescending(t => t.OrderId).Select(u => u.OrderId).First();
+            if(_context.orders.OrderByDescending(t => t.OrderId).Select(u => u.OrderId).FirstOrDefault() == null)
+            {
+                ViewBag.LastInvoiceNumber = 0;
+            } else
+            {
+                ViewBag.LastInvoiceNumber = _context.orders.OrderByDescending(t => t.OrderId).Select(u => u.OrderId).FirstOrDefault();
+            }
+            
             
             return View();
         }

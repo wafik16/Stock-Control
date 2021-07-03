@@ -16,13 +16,13 @@
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
     <style>
-        .grid-container {
+    /*    .grid-container {
             display: grid;
             grid-template-columns: auto auto auto auto;
             grid-gap: 20px;
             background-color: rgba(255, 255, 255, 0.8);
             padding: 20px;
-        }
+        }*/
 
             .grid-container > div {
                 background-color: rgba(255, 255, 255, 0.8);
@@ -30,7 +30,26 @@
                 text-align: center;
                 font-size: 70px;
             }
-
+        .grid-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            
+        }
+            .grid-container > .home-button {
+                padding: 10px;
+                width: 30rem;
+                
+                justify-content: center;
+                align-items:center
+            }
+            .grid-container > .home-button > a > input {
+                        font-size: 2rem;
+                        justify-content: center;
+                        width: 25rem;
+                    }
         
     </style>
 </head>

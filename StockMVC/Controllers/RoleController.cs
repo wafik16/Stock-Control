@@ -29,7 +29,7 @@ namespace StockMVC.Controllers
 
 
         // GET: RoleController/Create
-        [Authorize(Policy = "allowpolicy")]
+        [Authorize(Policy = "adminpolicy")]
         public IActionResult Create()
         {
             return View(new IdentityRole());
