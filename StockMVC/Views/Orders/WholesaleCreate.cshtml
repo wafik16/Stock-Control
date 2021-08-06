@@ -1,4 +1,4 @@
-﻿@model StockMVC.Models.Order
+﻿@model StockMVC.Models.WholesaleOrder
 
 
 
@@ -17,10 +17,18 @@
 
 <script>
     $(document).ready(function () {
-        $("#Product").val(0);
+        $("#Customer").val(0);
+        $("#Customer").change(function () {
+            var CustomerId = $("#Customer").val();
+            
+            GetCustomerProducts(CustomerId);
+        });
+
+
         $("#Product").change(function () {
             var ItemId = $("#Product").val();
-            GetProductUnitPrice(ItemId);
+            var CustomerId = $("#Customer").val();
+            GetProductUnitPrice(ItemId, CustomerId);
         });
 
         $("div").on("change", "input", function () {
@@ -37,16 +45,17 @@
             AddToTheItemList();
         });
 
-        $('#txtdeliveryfee, #txtdiscount').change(function () {
-
-        });
 
         $("#btnPayment").click(function () {
-            FinalPayment("/Orders/Creates");
+            FinalPayment("/Orders/WholesaleCreate");
         });
 
-    });
 
+
+
+
+
+    });
 
 
 
@@ -73,18 +82,26 @@
     function FinalItemTotal() {
         $("#txtsubtotal").val(0.00);
         $("#txtVAT").val(0.00);
+        $("#txtPaymentTotal").val(0.00);
+        $("#txttotalamount").val(0.00);
         var FinalTotal = 0.00;
         var FinalVAT = 0.00;
+        var SubTotal = 0.00;
         $("#tblTableItemList").find("tr:gt(0)").each(function () {
             var Total = parseFloat($(this).find("td:eq(4)").text());
             var Addition = Total * 0.075;
-            FinalTotal += Total;
+            SubTotal += Total;
             FinalVAT += Addition;
+            FinalTotal = (FinalVAT + SubTotal);
+           
             // alert(FinalTotal);
         });
 
-        $("#txtsubtotal").val(parseFloat(FinalTotal).toFixed(2));
+        $("#txtsubtotal").val(parseFloat(SubTotal).toFixed(2));
         $("#txtVAT").val(parseFloat(FinalVAT).toFixed(2));
+        $("#txtPaymentTotal").val(parseFloat(FinalTotal).toFixed(2));
+        $("#txttotalamount").val(parseFloat(FinalTotal).toFixed(2));
+
 
     }
 
@@ -97,24 +114,27 @@
         $("#tblTableItemList").find("tr:gt(0)").each(function () {
             var Total = parseFloat($(this).find("td:eq(4)").text());
             var Addition = Total * 0.075;
-            check += Total + Addition;
+           check += Total + Addition;
+            //check += Total;
             // alert(FinalTotal);
         });
         var Long = check - Discount + Delivery;
         TotalFinal += Long;
         $("#txttotalamount").val(parseFloat(TotalFinal).toFixed(2));
-        $("#txtPaymentTotal").val(parseFloat(TotalFinal).toFixed(2));
         $("#txtBalance").val(parseFloat(TotalFinal).toFixed(2));
+
 
     }
 
     function ResetItem() {
+        $("#txtStockBalance").val('');
         $("#txtUnitPrice").val('');
         $("#txtquantity").val('');
         $("#Product").val(0);
         $("#txttotal").val("");
         $("#txtdiscount").val('0.00');
         $("#txtdeliveryfee").val('0.00');
+
     }
 
     function CalculateSubTotal() {
@@ -124,15 +144,35 @@
         $("#txttotal").val(parseFloat(Total).toFixed(2));
     }
 
-    function GetProductUnitPrice(ItemId) {
+    function GetCustomerProducts(CustomerId) {
         $.ajax({
             async: true,
             type: 'GET',
             contentType: 'application/json; charset=utf-8',
-            data: { ItemId: ItemId },
-            url: "/orders/GetProductUnitPrice",
+            url: "/orders/GetCustomerProducts",
+            data: { CustomerId: CustomerId },
             success: function (data) {
-                $("#txtUnitPrice").val(parseFloat(data).toFixed(2));
+                console.log(data);
+                var s = '<option value="-1">Please Select</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].productId + '">' + data[i].productName + '</option>';
+                }
+                $("#Product").html(s);
+            }
+        });
+    }
+
+    function GetProductUnitPrice(ItemId, CustomerId) {
+        $.ajax({
+            async: true,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            data: { ItemId: ItemId, CustomerId: CustomerId },
+            
+            url: "/orders/GetCustomerProductUnitPrice",
+            success: function (data) {
+                $("#txtUnitPrice").val(parseFloat(data.del).toFixed(2));
+                $("#txtStockBalance").val(parseFloat(data.myt).toFixed(2));
             },
             error: function () {
                 alert("There is some problem");
@@ -148,12 +188,15 @@
         var Invoice = new Array();
         var LastOrderId = $("#LastInvoiceNumber").val();
         var NewInvoiceTobeUsed = (1 * LastOrderId) + 1;
+        var tests = [];
 
         const today = new Date();
-        var month = today.toLocaleString('default', { month: 'short' });    // yields month (add one as '.getMonth()' is zero indexed)
+        var month = today.toLocaleString('default', { month: 'short' });
         var year = today.getFullYear();
-        var NewInvoiceNumber = year + month + " -- 00" + NewInvoiceTobeUsed;
+        //var NewInvoiceNumber = year + month + " -- 00" + NewInvoiceTobeUsed;uncomment if you want invoice number from database
+        var NewInvoiceNumber = 0;
 
+        orders.CustomerId = $("#Customer").val();
         orders.Discount = $("#txtdiscount").val();
         orders.DeliveryFee = $("#txtdeliveryfee").val();
         orders.TotalAmount = $("#txttotalamount").val();
@@ -174,13 +217,22 @@
         });
         orders.ListOfOrders = ListOfOrders;
 
-        var newUrl= '@Url.Action("Index","Orders")';
+        $("#tblTableItemList").find("tr:gt(0)").each(function () {
+            t1 = parseFloat($(this).find("td:eq(0)").text());
+            t2 = parseFloat($(this).find("td:eq(3)").text());
+
+            if (typeof (t1) != "undefined") {
+                tests.push({ ProductId: t1, Balance: t2});
+            }
+        });
+
+        var newUrl= '@Url.Action("WholesaleIndex","Orders")';
 
         $.ajax({
             async: true,
             type: 'POST',
             url: url,
-            data: { order:orders },
+            data: { order: orders, stockLevels: tests },
             headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
             datatype: 'json',
             ContentType: 'application/json;utf-8'
@@ -241,11 +293,11 @@
 
 <div style="width:100%; height:100%; display:flex;padding-left:10px;overflow:hidden;">
 
-    <div style="width:35%;height:500px;">
+    <div style="width:35%;height:550px;">
 
         <fieldset>
             <legend>
-                La Boucherie
+                Viande
             </legend>
 
             <div class="container">
@@ -260,23 +312,30 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label">Product Name</label>
-                            @Html.DropDownList("Product", new SelectList((System.Collections.IEnumerable)ViewData["ProductName"], "Value", "Text"), new { @class = "form-control" })
+                            <label class="control-label">Customer Name</label>
+                            @Html.DropDownList("Customer", new SelectList((System.Collections.IEnumerable)ViewData["CustomerName"], "Value", "Text"), new { @class = "form-control" })
                         </div>
-
-
 
                         <div class="form-group">
-                            <label class="control-label">Price</label>
-                            <input type="text" style="text-align:right" id="txtUnitPrice" value="0.00" name="UnitPrice" class="form-control" />
+                            <label class="control-label">Product Name</label>
+                            <select class="form-control" id="Product" name="Product"></select>
                         </div>
 
+                        <div class="form-group">
 
+                            <div class="col-md-6">
+                                <label class="control-label">Price</label>
+                                <input type="text" style="text-align:right" id="txtUnitPrice" value="0.00" name="UnitPrice" class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label">Balance</label>
+                                <input type="text" style="text-align:right" id="txtStockBalance" value="0.00" name="StockBalance" class="form-control" readonly />
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label class="control-label">Quantity</label>
                             <input type="text" style="text-align:right" value="0.00" id="txtquantity" name="quantity" class="form-control" />
-
                         </div>
 
                         <div class="form-group">
@@ -298,7 +357,7 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group" style="margin-top:15px;">
-                            <a asp-action="Index">Back to List</a>
+                            <a asp-action="WholesaleIndex">Back to List</a>
                         </div>
                     </div>
 
@@ -330,7 +389,7 @@
 
         <fieldset style="margin-top:10px;">
 
-            <div class="container" style="height:100px;">
+            <div class="container" style="height:120px;">
                 <div class="row">
 
                     <div class="col-md-3">
@@ -356,38 +415,16 @@
                     </div>
 
                 </div>
-
                 <div class="row">
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label class="control-label">Discount</label>
-                            <input type="number" id="txtdiscount" value="0.00" style="text-align:right" name="discount" class="form-control" />
 
-                        </div>
+
+                    <div class="form-group">
+                        <input data-backdrop="static" data-keydrop="false" data-toggle="modal" data-target="#divPayment" type="submit" value="CheckOut" id="btnCheckOut" name="checkout" class="btn btn-primary" style="width:50%;text-align:center;margin-left:35px;" />
                     </div>
 
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label class="control-label">Delivery Fee</label>
-                            <input type="number" id="txtdeliveryfee" value="0.00" style="text-align:right" name="delivery" class="form-control" />
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label class="control-label">Total Amount</label>
-                            <input type="text" value="0.00" style="text-align:right" readonly id="txttotalamount" name="totalamount" class="form-control" />
-
-                        </div>
-                    </div>
-                    <div class="col-md-3" style="margin-top:25px;">
-
-                        <div class="form-group">
-                            <input data-backdrop="static" data-keydrop="false" data-toggle="modal" data-target="#divPayment" type="submit" value="CheckOut" id="btnCheckOut" name="checkout" class="btn btn-primary" style="width:80px;text-align:justify;" />
-                        </div>
-                    </div>
                 </div>
+
+
 
             </div>
         </fieldset>
@@ -414,10 +451,30 @@
                         </div>
 
                         <div class="row">
-                            <div class="form-group col-md-4">
-                                Amount Paid:
-                                <input style="text-align:right" type="text" id="txtPaymentAmount" value="0.00" class="form-control" />
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label">Discount</label>
+                                    <input type="number" id="txtdiscount" value="0.00" style="text-align:right" name="discount" class="form-control" />
 
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label">Delivery Fee</label>
+                                    <input type="number" id="txtdeliveryfee" value="0.00" style="text-align:right" name="delivery" class="form-control" />
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label">Total Amount</label>
+                                    <input type="text" value="0.00" style="text-align:right" readonly id="txttotalamount" name="totalamount" class="form-control" />
+
+                                </div>
                             </div>
                         </div>
                     </div>

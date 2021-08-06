@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Create New Stock";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
 }
 
 
@@ -21,7 +22,13 @@
 
 
         $("#btnSubmit").click(function () {
-            FinalPayment("/Orders/StockLevel");
+            let RoleName = $("#RoleName").val();
+            if (RoleName == 'Retail') {
+                FinalPayment("/Orders/StockLevel");
+            } else if (RoleName == 'wholesale') {
+                FinalPayment("/Orders/WholesaleStockLevel");
+            }
+
         });
 
     });
@@ -38,7 +45,7 @@
                 $("#btnAddToList").prop('disabled', true);
             }
         });
-    }); 
+    });
 
 
     function RemoveItem(ItemId) {
@@ -72,26 +79,35 @@
         var date = $("#txtorderdate").val();
 
         var LastOrderId = $("#LastInvoiceNumber").val();
+        var NewInvoiceTobeUsed = (1 * LastOrderId) + 1;
         const today = new Date();
         var month = today.toLocaleString('default', { month: 'short' });    // yields month (add one as '.getMonth()' is zero indexed)
         var year = today.getFullYear();
-        var NewInvoiceNumber = year + month + " -- 00" + LastOrderId;
+        var NewInvoiceNumber = year + month + " -- 00" + NewInvoiceTobeUsed;
+        var UserId = $("#UserId").val();
+        let RoleName = $("#RoleName").val();
         
+
         //orders.date = $("#txtdiscount").val();
 
         $("#tblTableItemList").find("tr:gt(0)").each(function () {
-         
+
             t1 = parseFloat($(this).find("td:eq(0)").text());
             t2 = parseFloat($(this).find("td:eq(2)").text());
 
             if (typeof (t1) != "undefined") {
-                tests.push({ ProductId: t1, Quantity: t2, NewOrderDate: date, InvoiceNumber: NewInvoiceNumber });
+                tests.push({ ProductId: t1, Quantity: t2, NewOrderDate: date, InvoiceNumber: NewInvoiceNumber, UserId: UserId });
                 info.push({ ProductId: t1, Balance: t2 });
             }
-          
+
         });
 
-        var newUrl= '@Url.Action("ListStock","NewStockLists")';
+        if (RoleName == 'Retail') {
+            var newUrl = '@Url.Action("ListStock","NewStockLists")';
+        } else if (RoleName == 'wholesale') {
+            var newUrl= '@Url.Action("wholesaleListStock","NewStockLists")';
+        }
+
 
         $.ajax({
             async: true,
@@ -109,7 +125,7 @@
         });
     }
 
-   
+
 </script>
 
 
@@ -161,7 +177,7 @@
 
         <fieldset style="height:369px;">
             <legend>
-                La Boucherie
+                Add Items
             </legend>
 
             <div class="container">
@@ -170,6 +186,8 @@
                        
                         <div class="form-group">
                             @Html.TextBox("LastInvoiceNumber", (int)ViewBag.LastInvoiceNumber, new { @class = "hidden" })
+                            @Html.TextBox("UserId", (string)ViewBag.UserId, new { @class = "hidden" })
+                            @Html.TextBox("RoleName", (string)ViewBag.RoleName, new { @class = "hidden" })
                             <label class="control-label">Date</label>
                             <input type="date" id="txtorderdate" name="orderdate" class="form-control" />
                         </div>
@@ -196,7 +214,14 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group" style="margin-top:15px;">
-                            <a asp-action="ListStock">Back to List</a>
+                       @if(ViewBag.RoleName == "Retail")
+            {
+                           <a asp-action="ListStock">Back to List</a>
+            } else
+            {
+                        <a asp-action="WholesaleListStock">Back to List</a>
+            }
+                            
                         </div>
                     </div>
 

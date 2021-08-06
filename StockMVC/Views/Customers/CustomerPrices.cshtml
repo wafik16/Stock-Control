@@ -1,0 +1,92 @@
+﻿@model IEnumerable<StockMVC.ViewModel.CustomersPricesVM>
+
+@{
+    ViewData["Title"] = "Invoice";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+}
+
+<script src="assets/js/jquery-1.9.1.js"></script>
+<script src="assets/js/printThis.js"></script>
+<script src="~/jquery-3.5.1.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+<script type="text/javascript">
+
+    function PrintOnlyTable() {
+        var HTML = $("html");
+        var cln = document.documentElement.innerHTML;
+        HTML.html($("table"));
+        window.print();
+        document.documentElement.innerHTML = cln;
+        return false;
+    }
+
+
+
+</script>
+
+
+
+<div>
+
+    <a asp-action="AddPrice" asp-route-id="@ViewBag.CustomerId">Add or Edit Customer Prices</a><br />
+
+</div>
+@if (Model.Any())
+{
+    <div class="row">
+
+        <div>
+            <h3>Customer Name:@ViewBag.CustomerName</h3>
+        </div>
+    </div>
+
+
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ProductName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Price)
+                    </th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Price)
+                        </td>
+
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+        <a href="javascript:window.print()" class="hidden-print">Click to Print This Page</a>
+        <p class="hidden-print">
+            <a asp-action="index">Back To List</a>
+        </p>
+
+    </div>
+}
+else
+{
+    <p>There are no prices yet</p>
+    <a asp-action="index">Back To List</a>
+}
+
+
+
+
+

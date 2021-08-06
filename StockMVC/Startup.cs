@@ -52,16 +52,29 @@ namespace StockMVC
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("allowpolicy",
-                    builder => builder.RequireRole("Admin, Manager"));
-                options.AddPolicy("writepolicy",
-                    builder => builder.RequireRole("Cashier"));
-                options.AddPolicy("deletepolicy",
-                    builder => builder.RequireRole("Manager"));
-                options.AddPolicy("editpolicy",
-                    builder => builder.RequireRole("Account"));
+                //options.AddPolicy("allowpolicy",
+                //    builder => builder.RequireRole("Admin", "Manager"));
+                //options.AddPolicy("writepolicy",
+                //    builder => builder.RequireRole("wholesale", "Retail"));
+                //options.AddPolicy("deletepolicy",
+                //    builder => builder.RequireRole("Manager"));
+                //options.AddPolicy("editpolicy",
+                //    builder => builder.RequireRole("Account"));
                 options.AddPolicy("adminpolicy",
                     builder => builder.RequireUserName("wafik16@yahoo.co.uk"));
+
+                options.AddPolicy("writepolicy", policy =>
+                  policy.RequireRole("wholesale", "Retail"));
+
+                options.AddPolicy("allowpolicy", policy =>
+                  policy.RequireRole("Admin", "Manager"));
+
+                options.AddPolicy("deletepolicy", policy =>
+                  policy.RequireRole("Manager"));
+
+                options.AddPolicy("editpolicy", policy =>
+                  policy.RequireRole("Account"));
+
             });
 
         }

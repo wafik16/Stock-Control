@@ -61,13 +61,15 @@ namespace StockMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,ProductName,Description,Price,CategoryId")] Product product, StockLevel stockLevel)
+        public async Task<IActionResult> Create([Bind("ProductId,ProductName,Description,Price,CategoryId")] Product product, StockLevel stockLevel, WholesaleStockLevel wholesaleStockLevel)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(product);
                 stockLevel.ProductId = product.ProductId;
                 _context.Add(stockLevel);
+                wholesaleStockLevel.ProductId = product.ProductId;
+                _context.Add(wholesaleStockLevel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -200,14 +202,14 @@ namespace StockMVC.Controllers
             ViewData["fromDate"] = fromDate;
             ViewData["toDate"] = toDate;
             ViewBag.ProductName = _context.Products.Where(o => o.ProductId == ProductName).Select(u => u.ProductName).FirstOrDefault();
-            ViewBag.Totalkg = _context.orderedItems.Include(p => p.Order).Where(o => o.ProductId == ProductName && o.Order.OrderDate >= fromDate && o.Order.OrderDate <= toDate).Sum(p =>p.Quantity);
+            ViewBag.Totalkg = _context.WholesaleOrderedItems.Include(p => p.Order).Where(o => o.ProductId == ProductName && o.Order.OrderDate >= fromDate && o.Order.OrderDate <= toDate).Sum(p =>p.Quantity);
 
-            var allOrders = _context.orderedItems.Include(p => p.Order).Where(t => t.Order.OrderDate >= fromDate && t.Order.OrderDate <= toDate && t.ProductId == ProductName).OrderByDescending(m => m.OrderId);
+            var allOrders = _context.WholesaleOrderedItems.Include(p => p.Order).Where(t => t.Order.OrderDate >= fromDate && t.Order.OrderDate <= toDate && t.ProductId == ProductName).OrderByDescending(m => m.OrderId);
 
             
 
             LLLVM model = new LLLVM();
-            model.orderedItems = _context.orderedItems.Include(p => p.Order).Where(t => t.Order.OrderDate >= fromDate && t.Order.OrderDate <= toDate && t.ProductId == ProductName).OrderByDescending(m => m.OrderId);
+            model.orderedItems = _context.WholesaleOrderedItems.Include(p => p.Order).Where(t => t.Order.OrderDate >= fromDate && t.Order.OrderDate <= toDate && t.ProductId == ProductName).OrderByDescending(m => m.OrderId);
             model.OtherDebits = _context.OtherDebits.Include(p => p.product).Include(p => p.debitMode).Where(t => t.DebitDate >= fromDate && t.DebitDate <= toDate && t.ProductId == ProductName).OrderByDescending(m => m.DebitDate);
             model.NewStockLists = _context.NewStockLists.Include(p => p.Product).Where(t => t.NewOrderDate >= fromDate && t.NewOrderDate <= toDate && t.ProductId == ProductName).OrderByDescending(m => m.NewOrderDate);
 

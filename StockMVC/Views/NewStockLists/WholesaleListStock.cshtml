@@ -1,0 +1,52 @@
+﻿@model IEnumerable<StockMVC.Models.WholesaleNewStockLists>
+
+@{
+    ViewData["Title"] = "ListStock";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+
+}
+
+<h2>List of New Stocks Entered</h2>
+
+<p>
+    <a asp-action="Create">Add New Stock</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.InvoiceNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NewOrderDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserId)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InvoiceNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NewOrderDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserId)
+                </td>
+
+                <td>
+                    <a asp-action="WholesaleListDetail" asp-route-id="@item.InvoiceNumber">Details</a> |
+                    <a asp-action="WholesaleDeleted" asp-route-id="@item.InvoiceNumber">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

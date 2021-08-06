@@ -36,6 +36,7 @@ namespace StockMVC.Models
         public ProductCategory Category { get; set; }
 
         public ICollection<OrderedItem> OrderItems { get; set; }
+        public ICollection<WholesaleOrderedItem> WholesaleOrderItems { get; set; }
 
         public ICollection<OtherDebit> OtherDebits { get; set; }
     }

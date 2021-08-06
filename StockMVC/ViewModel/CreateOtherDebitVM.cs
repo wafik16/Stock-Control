@@ -33,5 +33,8 @@ namespace StockMVC.ViewModel
         [ForeignKey("DebitModeId")]
         [Display(Name = "Debit/Credit Mode")]
         public DebitMode debitMode { get; set; }
+
+  
+        public string RoleName { get; set; }
     }
 }

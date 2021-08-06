@@ -11,6 +11,7 @@ namespace StockMVC.Models
         public string ModeOfPayment { get; set; }
 
         public ICollection<Order> Orders { get; set; }
+        public ICollection<WholesaleOrder> WholesaleOrders { get; set; }
     }
 
 }

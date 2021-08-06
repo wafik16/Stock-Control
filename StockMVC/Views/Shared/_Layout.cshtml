@@ -23,6 +23,36 @@
 
     <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+    <style>
+
+        .grid-container > div {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            text-align: center;
+            font-size: 70px;
+        }
+
+        .grid-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+            .grid-container > .home-button {
+                padding: 10px;
+                width: 30rem;
+                justify-content: center;
+                align-items: center
+            }
+
+                .grid-container > .home-button > a > input {
+                    font-size: 2rem;
+                    justify-content: center;
+                    width: 25rem;
+                }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -38,17 +68,17 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-              
+                    <li><a asp-area="" asp-controller="Home" asp-action="RetailFrontpage">Home</a></li>
+
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                     <li><a asp-area="" asp-controller="Products" asp-action="Index">Products</a></li>
+                    <li><a asp-area="" asp-controller="Orders" asp-action="index">Sales Report</a></li>
                     @{
-                        if (User.IsInRole("Cashier"))
+                        if (User.IsInRole("Retail"))
                         {
-                                        <li><a asp-area="" asp-controller="Orders" asp-action="Create">SELL</a></li>
+                            <li><a asp-area="" asp-controller="Orders" asp-action="Create">SELL</a></li>
                         }
                     }
-                    
                     <li><a asp-area="" asp-controller="NewStockLists" asp-action="Stock">STOCK BALANCE</a></li>
 
                 </ul>

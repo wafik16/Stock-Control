@@ -189,6 +189,8 @@ namespace StockMVC.Data.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("varchar(max)");
 
+                    b.Property<string>("ContactPerson");
+
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasColumnType("varchar(50)")
@@ -218,6 +220,13 @@ namespace StockMVC.Data.Migrations
                     b.HasKey("DebitModeId");
 
                     b.ToTable("DebitModes");
+
+                    b.HasData(
+                        new { DebitModeId = 1, ModeOfDebit = "DAMAGE" },
+                        new { DebitModeId = 2, ModeOfDebit = "PR" },
+                        new { DebitModeId = 3, ModeOfDebit = "WEIGH LOSS" },
+                        new { DebitModeId = 4, ModeOfDebit = "WEIGHT GAIN" }
+                    );
                 });
 
             modelBuilder.Entity("StockMVC.Models.NewStockLists", b =>
@@ -233,6 +242,8 @@ namespace StockMVC.Data.Migrations
                     b.Property<int>("ProductId");
 
                     b.Property<decimal>("Quantity");
+
+                    b.Property<string>("UserId");
 
                     b.HasKey("Id");
 
@@ -331,6 +342,13 @@ namespace StockMVC.Data.Migrations
                     b.HasKey("PaymentModeId");
 
                     b.ToTable("paymentModes");
+
+                    b.HasData(
+                        new { PaymentModeId = 1, ModeOfPayment = "CASH" },
+                        new { PaymentModeId = 2, ModeOfPayment = "POS" },
+                        new { PaymentModeId = 3, ModeOfPayment = "TRANSFER" },
+                        new { PaymentModeId = 4, ModeOfPayment = "CREDIT" }
+                    );
                 });
 
             modelBuilder.Entity("StockMVC.Models.Product", b =>
@@ -425,6 +443,116 @@ namespace StockMVC.Data.Migrations
                     b.ToTable("StockLevels");
                 });
 
+            modelBuilder.Entity("StockMVC.Models.WholesaleNewStockLists", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("InvoiceNumber");
+
+                    b.Property<DateTime>("NewOrderDate");
+
+                    b.Property<int>("ProductId");
+
+                    b.Property<decimal>("Quantity");
+
+                    b.Property<string>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("wholesaleNewStockLists");
+                });
+
+            modelBuilder.Entity("StockMVC.Models.WholesaleOrder", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CustomerId");
+
+                    b.Property<decimal>("DeliveryFee");
+
+                    b.Property<decimal>("Discount");
+
+                    b.Property<string>("InvoiceNumber");
+
+                    b.Property<DateTime>("OrderDate");
+
+                    b.Property<int>("PaymentModeId");
+
+                    b.Property<decimal>("TotalAmount");
+
+                    b.Property<decimal>("TotalVat");
+
+                    b.Property<decimal>("TotalWithoutVat");
+
+                    b.Property<string>("UserId")
+                        .IsRequired();
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("PaymentModeId");
+
+                    b.ToTable("WholesaleOrders");
+                });
+
+            modelBuilder.Entity("StockMVC.Models.WholesaleOrderedItem", b =>
+                {
+                    b.Property<int>("OrderId");
+
+                    b.Property<int>("ProductId");
+
+                    b.Property<decimal>("Price");
+
+                    b.Property<decimal>("Quantity");
+
+                    b.Property<decimal>("Total");
+
+                    b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("WholesaleOrderedItems");
+                });
+
+            modelBuilder.Entity("StockMVC.Models.WholesalePrices", b =>
+                {
+                    b.Property<int>("CustomerId");
+
+                    b.Property<int>("ProductId");
+
+                    b.Property<decimal>("Price");
+
+                    b.HasKey("CustomerId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("WholesalePrices");
+                });
+
+            modelBuilder.Entity("StockMVC.Models.WholesaleStockLevel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("Balance");
+
+                    b.Property<int>("ProductId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("wholesaleStockLevels");
+                });
+
             modelBuilder.Entity("StockMVC.ViewModel.CreateOtherDebitVM", b =>
                 {
                     b.Property<int>("Id")
@@ -438,6 +566,8 @@ namespace StockMVC.Data.Migrations
                     b.Property<int>("ProductId");
 
                     b.Property<decimal>("Quantity");
+
+                    b.Property<string>("RoleName");
 
                     b.HasKey("Id");
 
@@ -544,6 +674,61 @@ namespace StockMVC.Data.Migrations
                 });
 
             modelBuilder.Entity("StockMVC.Models.StockLevel", b =>
+                {
+                    b.HasOne("StockMVC.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("StockMVC.Models.WholesaleNewStockLists", b =>
+                {
+                    b.HasOne("StockMVC.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("StockMVC.Models.WholesaleOrder", b =>
+                {
+                    b.HasOne("StockMVC.Models.Customer", "customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("StockMVC.Models.PaymentMode", "PaymentMode")
+                        .WithMany("WholesaleOrders")
+                        .HasForeignKey("PaymentModeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("StockMVC.Models.WholesaleOrderedItem", b =>
+                {
+                    b.HasOne("StockMVC.Models.WholesaleOrder", "Order")
+                        .WithMany("ListOfOrders")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("StockMVC.Models.Product", "Product")
+                        .WithMany("WholesaleOrderItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("StockMVC.Models.WholesalePrices", b =>
+                {
+                    b.HasOne("StockMVC.Models.Customer", "customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("StockMVC.Models.Product", "product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("StockMVC.Models.WholesaleStockLevel", b =>
                 {
                     b.HasOne("StockMVC.Models.Product", "Product")
                         .WithMany()

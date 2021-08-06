@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\Migrations\20210710171027_Wholesale-items.cs" />
+    <Compile Remove="Data\Migrations\20210710171027_Wholesale-items.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="jQuery" Version="3.5.1" />
     <PackageReference Include="jQuery.Validation" Version="1.19.2" />

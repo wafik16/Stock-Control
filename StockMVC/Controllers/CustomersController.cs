@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.Web.CodeGeneration;
 using StockMVC.Data;
 using StockMVC.Models;
 using Microsoft.AspNetCore.Authorization;
+using StockMVC.ViewModel;
 
 namespace StockMVC.Controllers
 {
@@ -54,6 +55,51 @@ namespace StockMVC.Controllers
             return View(model);
         }
 
+        public IActionResult AddPrice(int? id)
+        {
+          
+            ViewData["ProductName"] = new SelectList(_context.Products.OrderBy(m => m.ProductName), "ProductId", "ProductName");
+            ViewBag.CustomerId = id;
+
+            return View();
+        }
+
+        [HttpPost]
+        [Route("/Customers/AddUpdatePrice")]
+        public JsonResult AddUpdatePrice(WholesalePrices[] info)
+        {
+            if (ModelState.IsValid)
+            {
+
+                foreach (var item in info)
+                {
+                    _context.Entry(item).State = !_context.WholesalePrices.Any(f => f.CustomerId
+                    == item.CustomerId && f.ProductId == item.ProductId ) ? EntityState.Added : EntityState.Modified;
+                    _context.SaveChanges();
+                }
+                //foreach (var lis in tests)
+                //{
+                //    _context.NewStockLists.Add(lis);
+                //}
+
+                //foreach (var item in info)
+                //{
+                //    StockLevel updatedstock = (from c in _context.StockLevels
+                //                               where c.ProductId == item.ProductId
+                //                               select c).FirstOrDefault();
+                //    updatedstock.Balance += item.Balance;
+                //}
+
+                _context.SaveChanges();
+                return Json("Prices Updated/Added");
+
+            }
+            return Json(new { newUrl = Url.Action("Index", "Order") });
+        }
+
+   
+
+
         // POST: Customers/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -71,7 +117,7 @@ namespace StockMVC.Controllers
         }
 
         // GET: Customers/Edit/5
-        [Authorize(Policy = "editpolicy")]
+        //[Authorize(Policy = "editpolicy")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,6 +131,56 @@ namespace StockMVC.Controllers
                 return NotFound();
             }
             return View(customer);
+        }
+
+        public IActionResult CustomerPrices(int? id)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.CustomerId = id;
+
+
+            var order = (from oin in _context.WholesalePrices
+                         join pid in _context.Products
+                         on oin.ProductId equals pid.ProductId
+                         join cus in _context.Customers
+                         on oin.CustomerId equals cus.CustomerID
+                         where oin.CustomerId == id
+                         select new
+                         {
+                             ProductName = pid.ProductName,
+                             Price = oin.Price,
+                            
+                         });
+
+
+
+            ViewBag.CustomerName = _context.Customers.Where(o => o.CustomerID == id).Select(u => u.CustomerName).FirstOrDefault();
+
+
+            List<CustomersPricesVM> detailsViewModel = new List<CustomersPricesVM>();
+            foreach (var odered in order)
+            {
+                CustomersPricesVM data = new CustomersPricesVM();
+                data.ProductName = odered.ProductName;
+                data.Price = odered.Price;
+                
+
+                detailsViewModel.Add(data);
+            }
+
+
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(detailsViewModel);
         }
 
         // POST: Customers/Edit/5

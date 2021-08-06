@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+@{
+    ViewData["Title"] = "Wellcome";
+    Layout = "_Layout";
+}
+
+
+
+<div class="grid-container">
+    
+            <div class="home-button"><a asp-controller="Orders" asp-action="Create"><input type="button" class="btn btn-primary" value="SELL" /></a></div>
+  
+
+    <div class="home-button"><a asp-controller="Orders" asp-action="Index"><input type="button" class="btn btn-primary" value="SALES REPORT" /></a></div>
+    <div class="home-button"><a asp-controller="NewStockLists" asp-action="ListStock"><input type="button" class="btn btn-primary" value="NEW STOCK" /></a></div>
+    <div class="home-button"><a asp-controller="Orders" asp-action="OtherDebitList"><input type="button" class="btn btn-primary" value="OTHER CREDIT/DEBIT" /></a></div>
+    <div class="home-button"><a asp-controller="NewStockLists" asp-action="Stock"><input type="button" class="btn btn-primary" value="STOCK BALANCE" /></a></div>
+    @{
+        if (User.Identity.Name == "wafik16@yahoo.co.uk")
+        {
+            <div class="home-button"><a asp-controller="Identity" asp-action="Account/Register"><input type="button" class="btn btn-primary" value="NEW USER" /></a></div>
+            <div class="home-button"><a asp-controller="Role" asp-action="Index"><input type="button" class="btn btn-primary" value="ROLES" /></a></div>
+        }
+    }
+    
+    <div class="home-button"><a asp-controller="NewStockLists" asp-action="StockTake"><input type="button" class="btn btn-primary" value="STOCK SHEET" /></a></div>
+
+</div>

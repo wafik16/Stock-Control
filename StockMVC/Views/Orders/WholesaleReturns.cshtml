@@ -1,0 +1,231 @@
+﻿@model StockMVC.Models.WholesaleOrder
+
+@{
+    ViewData["Title"] = "Returns";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+}
+
+
+<h4>Add New Stock</h4>
+<hr />
+<script src="~/jquery-3.5.1.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#Product").val(0);
+
+        $("#btnAddToList").click(function () {
+            AddToTheItemList();
+        });
+
+
+
+        $("#btnSubmit").click(function () {
+                FinalPayment("/Orders/WholesaleReturnsPost");
+        });
+
+    });
+
+    $(function () {
+        $('#txtquantity').keyup(function () {
+            var Quantity = $("#txtquantity").val();
+            if ((Quantity >= 0) && (Quantity != 0)) {
+                //Check to see if there is any text entered
+                // If there is no text within the input ten disable the button
+                $("#btnAddToList").prop('disabled', false);
+            } else {
+                //If there is text in the input, then enable the button
+                $("#btnAddToList").prop('disabled', true);
+            }
+        });
+    });
+
+
+    function RemoveItem(ItemId) {
+        $(ItemId).closest('tr').remove();
+    }
+
+    function AddToTheItemList() {
+        var TblItemList = $("#tblTableItemList");
+        var Quantity = $("#txtquantity").val();
+        var ItemId = $("#Product").val();
+        var ItemName = $("#Product option:selected").text();
+
+        var ItemList = "<tr><td hidden>" + ItemId + "</td><td>" + ItemName + "</td><td>" + parseFloat(Quantity).toFixed(2) + "</td><td> <input type='button' value='Remove' name='remove' class='btn btn-danger' onclick='RemoveItem(this)' /> </tr></tr>";
+
+        TblItemList.append(ItemList);
+        ResetItem();
+    }
+
+
+    function ResetItem() {
+        $("#txtquantity").val('');
+        $("#Product").val(0);
+    }
+
+
+    function FinalPayment(url) {
+        var tests = [];
+        var info = [];
+        var t1 = "";
+        var t2 = "";
+
+
+        $("#tblTableItemList").find("tr:gt(0)").each(function () {
+
+            t1 = parseFloat($(this).find("td:eq(0)").text());
+            t2 = parseFloat($(this).find("td:eq(2)").text());
+
+            if (typeof (t1) != "undefined") {
+                tests.push({ ProductId: t1, Quantity: t2});
+                
+            }
+
+        });
+
+   
+            var newUrl = '@Url.Action("Order","WholesaleIndex")';
+
+
+        $.ajax({
+            async: true,
+            type: 'POST',
+            url: url,
+            data: {tests},
+            headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+            datatype: 'json',
+            ContentType: 'application/json;utf-8'
+        }).done(function (data) {
+            alert('RETURN SUCCESSFULL');
+            window.location.href = newUrl;
+        }).error(function (err) {
+            alert("Error " + err.status);
+        });
+    }
+
+
+</script>
+
+
+
+<style>
+    .modal {
+        text-align: center;
+        padding: 0 !important;
+    }
+
+        .modal:before {
+            content: '';
+            display: inline-block;
+            height: 100%;
+            vertical-align: middle;
+            margin-right: -4px;
+        }
+
+    .modal-dialog {
+        display: inline-block;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    fieldset {
+        border: 1px solid #ddd !important;
+        margin: 0;
+        padding: 10px;
+        position: relative;
+        border-radius: 4px;
+        background-color: #f5f5f5;
+    }
+
+    legend {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 0px;
+        width: 60%;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 5px 5px 5px 10px;
+        background-color: #ffffff;
+    }
+</style>
+
+<div style="width:100%; height:100%; display:flex;padding-left:10px;overflow:hidden;">
+
+    <div style="width:35%;height:400px;">
+
+        <fieldset style="height:369px;">
+            <legend>
+                Add Items
+            </legend>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+
+                        <div class="form-group">
+                            <label class="control-label">Product Name</label>
+                            @Html.DropDownList("Product", new SelectList((System.Collections.IEnumerable)ViewData["ProductName"], "Value", "Text"), new { @class = "form-control" })
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Quantity</label>
+                            <input type="text" style="text-align:right" value="0.00" id="txtquantity" name="quantity" class="form-control" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <input style="margin-top:15px;" type="button" value="Add To List" name="AddToList" id="btnAddToList" class="btn btn-success" disabled="disabled" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group" style="margin-top:15px;">
+
+                                <a asp-action="WholesaleIndex">Back to List</a>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </fieldset>
+
+
+
+    </div>
+
+    <div style="width:63%; height:400px; padding-left:20px;">
+        <fieldset style="height:307px; overflow:scroll">
+            <legend>Listed Items</legend>
+            <table style="width:100%;" id="tblTableItemList">
+                <thead>
+
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+            </table>
+        </fieldset>
+
+        <fieldset style="margin-top:5px;">
+
+
+
+            <div>
+                <input type="submit" value="Submit" id="btnSubmit" name="submit" class="btn btn-primary" style="width:100%;text-align:center;" />
+            </div>
+
+        </fieldset>
+
+    </div>
+
+</div>
+

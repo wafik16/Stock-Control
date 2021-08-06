@@ -1,0 +1,213 @@
+﻿@model StockMVC.Models.WholesalePrices
+
+@{
+    ViewData["Title"] = "Add New Customer Price";
+}
+
+
+<h4>Add New Customer Price</h4>
+<hr />
+<script src="~/jquery-3.5.1.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#Product").val(0);
+
+        $("#btnAddToList").click(function () {
+            AddToTheItemList();
+        });
+
+
+
+        $("#btnSubmit").click(function () {
+            FinalPayment("/Customers/AddUpdatePrice");
+        });
+
+    });
+
+
+    function RemoveItem(ItemId) {
+        $(ItemId).closest('tr').remove();
+    }
+
+    function AddToTheItemList() {
+        var TblItemList = $("#tblTableItemList");
+        var Price = $("#txtprice").val();
+        var ItemId = $("#Product").val();
+        var ItemName = $("#Product option:selected").text();
+
+        var ItemList = "<tr><td hidden>" + ItemId + "</td><td>" + ItemName + "</td><td>" + parseFloat(Price).toFixed(2) + "</td><td> <input type='button' value='Remove' name='remove' class='btn btn-danger' onclick='RemoveItem(this)' /> </tr></tr>";
+
+        TblItemList.append(ItemList);
+        ResetItem();
+    }
+
+
+    function ResetItem() {
+        $("#txtprice").val('');
+        $("#Product").val(0);
+    }
+
+
+    function FinalPayment(url) {
+        var tests = [];
+        var info = [];
+        var t1 = "";
+        var t2 = "";
+        var CustomerId = $("#CustomerId").val();
+        info.CustomerId = $("#CustomerId").val();
+
+        $("#tblTableItemList").find("tr:gt(0)").each(function () {
+
+            t1 = parseFloat($(this).find("td:eq(0)").text());
+            t2 = parseFloat($(this).find("td:eq(2)").text());
+
+            if (typeof (t1) != "undefined") {
+
+                info.push({ ProductId: t1, Price: t2, CustomerId: CustomerId });
+            }
+
+        });
+
+        var newUrl = '@Url.Action("CustomerPrices/","Customers")' + CustomerId;
+
+        $.ajax({
+            async: true,
+            type: 'POST',
+            url: url,
+            data: {tests, info},
+            headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+            datatype: 'json',
+            ContentType: 'application/json;utf-8'
+        }).done(function (data) {
+            alert('PRICES ADDED/UPDATED SUCCESSFULLY ');
+            window.location.href = newUrl;
+        }).error(function (err) {
+            alert("Error " + err.status);
+        });
+    }
+
+
+</script>
+
+
+
+<style>
+    .modal {
+        text-align: center;
+        padding: 0 !important;
+    }
+
+        .modal:before {
+            content: '';
+            display: inline-block;
+            height: 100%;
+            vertical-align: middle;
+            margin-right: -4px;
+        }
+
+    .modal-dialog {
+        display: inline-block;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    fieldset {
+        border: 1px solid #ddd !important;
+        margin: 0;
+        padding: 10px;
+        position: relative;
+        border-radius: 4px;
+        background-color: #f5f5f5;
+    }
+
+    legend {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 0px;
+        width: 60%;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 5px 5px 5px 10px;
+        background-color: #ffffff;
+    }
+</style>
+
+<div style="width:100%; height:100%; display:flex;padding-left:10px;overflow:hidden;">
+
+    <div style="width:35%;height:400px;">
+
+        <fieldset style="height:369px;">
+            <legend>
+                Viande
+            </legend>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        @Html.TextBox("CustomerId", (int)ViewBag.CustomerId, new { @class = "hidden" })
+                        <div class="form-group">
+                            <label class="control-label">Product Name</label>
+                            @Html.DropDownList("Product", new SelectList((System.Collections.IEnumerable)ViewData["ProductName"], "Value", "Text"), new { @class = "form-control" })
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Price</label>
+                            <input type="text" style="text-align:right" value="0.00" id="txtprice" name="price" class="form-control" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <input style="margin-top:15px;" type="button" value="Add To List" name="AddToList" id="btnAddToList" class="btn btn-success" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group" style="margin-top:15px;">
+                            <a asp-action="CustomerPrices">Back to List</a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </fieldset>
+
+
+
+    </div>
+
+    <div style="width:63%; height:400px; padding-left:20px;">
+        <fieldset style="height:307px; overflow:scroll">
+            <legend>Listed Items</legend>
+            <table style="width:100%;" id="tblTableItemList">
+                <thead>
+
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+            </table>
+        </fieldset>
+
+        <fieldset style="margin-top:5px;">
+
+
+
+            <div>
+                <input type="submit" value="Submit" id="btnSubmit" name="submit" class="btn btn-primary" style="width:100%;text-align:center;" />
+            </div>
+
+        </fieldset>
+
+    </div>
+
+</div>
+

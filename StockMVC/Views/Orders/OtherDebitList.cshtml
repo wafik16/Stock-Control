@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "OtherDebitList";
+    Layout = "~/Views/Shared/_BlankLayout.cshtml";
 }
 
 <h2>List of Other Debits</h2>
@@ -53,9 +54,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.debitMode.ModeOfDebit)
-            </td>
-            <td>
-            <a asp-action="Deleted" asp-route-id="@item.DebitId">Delete</a>
             </td>
         </tr>
 }

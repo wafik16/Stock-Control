@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Activity";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
 }
 <div>
     <a asp-action="ProductActivities" class="hidden-print">Back</a>
@@ -30,7 +30,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (OrderedItem item in Model.orderedItems)
+            @foreach (WholesaleOrderedItem item in Model.orderedItems)
             {
                 <tr>
                     <td>
@@ -113,7 +113,7 @@ else
                     Date
                 </th>
                 <th>
-                    mode of Debit
+                    Mode of Debit/Credit
                 </th>
                 <th>
                     Quantity

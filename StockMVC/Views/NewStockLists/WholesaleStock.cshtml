@@ -1,0 +1,49 @@
+﻿@model IEnumerable<StockMVC.Models.WholesaleStockLevel>
+
+@{
+    ViewData["Title"] = "Stock";
+    Layout = "~/Views/Shared/_WholesaleLayout.cshtml";
+}
+<a href="javascript:window.print()" class="hidden-print">Click to Print This Page</a>
+<h2>Stock Balance</h2>
+
+
+
+<div id="pdfContainer">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Product)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Balance)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Product.ProductName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Balance)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+<script type="text/javascript">
+    $("#btnPdf").click(function () {
+        var sHtml = $("pdfContainer").html();
+        sHtml = sHtml.replace(/</g, "StrTag").replace(/>/g, "EndTag");
+        window.open('../Pdf/GeneratePdf?html=', sHtml, '_blank');
+
+    });
+</script>

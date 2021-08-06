@@ -17,7 +17,12 @@ namespace StockMVC.Controllers
         {
             return View();
         }
-        public IActionResult frontpage()
+        public IActionResult RetailFrontpage()
+        {
+            return View();
+        }
+
+        public IActionResult WholesaleFrontpage()
         {
             return View();
         }

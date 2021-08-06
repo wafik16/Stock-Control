@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Customers";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
 }
 
 <h2>Customers</h2>
@@ -43,6 +44,7 @@
                 @Html.DisplayFor(modelItem => item.RegisterDate)
             </td>
             <td>
+                <a asp-action="CustomerPrices" asp-route-id="@item.CustomerID">Prices</a> |
                 <a asp-action="Edit" asp-route-id="@item.CustomerID">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.CustomerID">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.CustomerID">Delete</a>

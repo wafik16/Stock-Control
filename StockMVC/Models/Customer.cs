@@ -26,6 +26,9 @@ namespace StockMVC.Models
         [Column(TypeName = "varchar(100)")]
         public string Email { get; set; }
 
+        [Display(Name = "Contact Person")]
+        public string ContactPerson { get; set; }
+
         [RegularExpression("^[a-z]{4}|[0-9]{11,}", ErrorMessage = "Not a valid Mobile number")]
         [Column(TypeName = "varchar(11)")]
         public string Mobile { get; set; }

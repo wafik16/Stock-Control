@@ -11,7 +11,7 @@ namespace StockMVC.ViewModel
     [NotMapped]
     public class LLLVM
     {
-        public IEnumerable<OrderedItem> orderedItems { get; set; }
+        public IEnumerable<WholesaleOrderedItem> orderedItems { get; set; }
         public IEnumerable<OtherDebit> OtherDebits { get; set; }
         public IEnumerable<NewStockLists> NewStockLists { get; set; }
     }

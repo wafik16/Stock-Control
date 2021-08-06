@@ -1,0 +1,43 @@
+﻿@model IEnumerable<StockMVC.Models.WholesaleStockLevel>
+
+@{
+    ViewData["Title"] = "StockTake";
+    Layout = "~/Views/Shared/_WholesaleLayout.cshtml";
+}
+
+<h2>StockTake</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Product.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Balance)
+            </th>
+            <th>
+                Stock Take
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Balance)
+                </td>
+                <td>
+                </td>
+
+
+            </tr>
+        }
+    </tbody>
+</table>

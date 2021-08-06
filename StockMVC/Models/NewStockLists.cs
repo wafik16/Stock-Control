@@ -19,6 +19,8 @@ namespace StockMVC.Models
         [Display(Name = "Invoice Number")]
         public string InvoiceNumber { get; set; }
 
+        public string UserId { get; set; }
+
         [ForeignKey("ProductId")]
         public Product Product { get; set; }
     }
